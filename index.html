@@ -90,10 +90,15 @@ var clap = false
 
 function song(time) {
   if (bass) {
-    bassSynth.triggerAttackRelease('c1', '8n', time)
-  };
+    bassSynth.triggerAttackRelease('c1', '8n', time);
+  }
   if (clap) {
-    claps.start()
+    if ((claps.volume % 8) == 0){
+      claps.volume = claps.volume + 1
+    }
+    else {
+      claps.volume = claps.volume - 8
+    }
   }
 }
 
@@ -119,11 +124,13 @@ document.querySelector('#kickStop').onclick = function() {
 }
 
 document.querySelector('#clapStart').onclick = function() {
-  clap = true;
+  claps = true;
+  claps.start();
 }
 
 document.querySelector('#clapStop').onclick = function() {
-  clap = false;
+  claps = false;
+  claps.stop();
 }
 
 </script>
