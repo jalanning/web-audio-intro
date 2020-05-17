@@ -15,18 +15,22 @@
   <h2>Click the buttons to make (or stop) some sound:</h2>
   <button id="playButton" class="btn-transport" type="button">play</button>
   <button id="stopButton" class="btn-transport" type="button">stop</button>
-  <button id="myButton" class="btn-transport" type="button">mine</button>
-  <button id="myButton2" class="btn-transport" type="button">mine2</button>
   <fieldset>
     <legend>Use slider to control filter cutoff frequency</legend>
     <label id="filterLabel" for="filterSlider">3200</label>
     <input type="range" id="filterSlider" name="filterSlider" min="200" max="6200" step="10" />
   </fieldset>
+  <button id="loopStart" class="btn-transport" type="button">begin loop</button>
+  <button id="loopStop" class="btn-transport" type="button">end loop</button>
   <fieldset>
     <legend>Use slider to control BPM</legend>
     <label id="bpmLabel" for="bpmSlider">140</label>
-    <input type="range" id="bpmSlider" name="bpmSlider" min="80" max="250" step="5" />
+    <input type="range" id="bpmSlider" name="bpmSlider" min="60" max="300" step="5" />
   </fieldset>
+  <button id="kickStart" class="btn-transport" type="button">play bass</button>
+  <button id="kickStop" class="btn-transport" type="button">stop bass</button>
+  <button id="clapStart" class="btn-transport" type="button">play claps</button>
+  <button id="clapStop" class="btn-transport" type="button">stop claps</button>
 </main>
 
 <script src="js/Tone.js"></script>
@@ -80,28 +84,46 @@ bpmSlider.addEventListener('input', function() {
 
 let loopBeat;
 let bassSynth;
-function setup() {
-  bassSynth = new Tone.MembraneSynth().toMaster();
+let claps;
+var bass = false
+var clap = false
+
+function song(time) {
+  if (bass) {
+    bassSynth.triggerAttackRelease('c1', '8n', time)
+  };
+  if (clap) {
+    claps.start()
+  }
+}
+
+document.querySelector('#loopStart').onclick = function() {
   loopBeat = new Tone.Loop(song, '4n');
-  Tone.Transport.bpm.value = 140
+  bassSynth = new Tone.MembraneSynth().toMaster();
+  claps = new Tone.Player("./samples/clap.mp3").toMaster()
+  bass = true
   Tone.Transport.start();
   loopBeat.start(0);
 }
 
-function song(time) {
-  bassSynth.triggerAttackRelease('c1', '8n', time)
-  console.log(time)
+document.querySelector('#loopStop').onclick = function() {
+  Tone.Transport.stop();
 }
 
-function stop() {
-  Tone.Transport.stop()
+document.querySelector('#kickStart').onclick = function() {
+  bass = true;
 }
 
-document.querySelector('#myButton').onclick = function() {
-  setup()
+document.querySelector('#kickStop').onclick = function() {
+  bass = false;
 }
-document.querySelector('#myButton2').onclick = function() {
-  stop()
+
+document.querySelector('#clapStart').onclick = function() {
+  clap = true;
+}
+
+document.querySelector('#clapStop').onclick = function() {
+  clap = false;
 }
 
 </script>
